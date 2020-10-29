@@ -53,7 +53,7 @@ var (
 	SubnetGroupVersionKind = SchemeGroupVersion.WithKind(SubnetKind)
 )
 
-// SecurityGroup type metadata.
+// SecurityGroup type Metadata.
 var (
 	SecurityGroupKind             = reflect.TypeOf(SecurityGroup{}).Name()
 	SecurityGroupGroupKind        = schema.GroupKind{Group: Group, Kind: SecurityGroupKind}.String()
