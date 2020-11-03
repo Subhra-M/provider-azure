@@ -109,7 +109,7 @@ func (e *external) Create(ctx context.Context, mg resource.Managed) (managed.Ext
 	}
 	v.Status.SetConditions(runtimev1alpha1.Creating())
 
-	af := azurefirewall.NewFireWallParameters(v)
+	af := azurefirewall.NewAzureFirewallParameters(v)
 
 	if _, err := e.client.CreateOrUpdate(ctx, v.Spec.ResourceGroupName, meta.GetExternalName(v), af); err != nil {
 		return managed.ExternalCreation{}, errors.Wrap(err, errCreateAzureFirewall)

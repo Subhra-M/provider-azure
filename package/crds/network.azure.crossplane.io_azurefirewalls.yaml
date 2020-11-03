@@ -99,7 +99,7 @@ spec:
                       type: array
                   type: object
                 ipConfigurations:
-                  description: 'ApplicationRuleCollections - Collection of application rule collections used by Azure Firewall. ApplicationRuleCollections *[]AzureFirewallApplicationRuleCollection `json:"applicationRuleCollections,omitempty"` NatRuleCollections - Collection of NAT rule collections used by Azure Firewall. NatRuleCollections *[]AzureFirewallNatRuleCollection `json:"natRuleCollections,omitempty"` TODO: Uncomment and add nat rules NetworkRuleCollections - Collection of network rule collections used by Azure Firewall. NetworkRuleCollections *[]AzureFirewallNetworkRuleCollection `json:"networkRuleCollections,omitempty"` IPConfigurations - IP configuration of the Azure Firewall resource.'
+                  description: NetworkRuleCollections - Collection of network rule collections used by Azure Firewall. NetworkRuleCollections *[]AzureFirewallNetworkRuleCollection `json:"networkRuleCollections,omitempty"` IPConfigurations - IP configuration of the Azure Firewall resource.
                   items:
                     description: AzureFirewallIPConfiguration IP configuration of an Azure Firewall.
                     properties:
@@ -135,6 +135,75 @@ spec:
                                 description: ID - Resource ID.
                                 type: string
                             type: object
+                        type: object
+                    type: object
+                  type: array
+                natRuleCollections:
+                  description: ApplicationRuleCollections - Collection of application rule collections used by Azure Firewall. ApplicationRuleCollections *[]AzureFirewallApplicationRuleCollection `json:"applicationRuleCollections,omitempty"` NatRuleCollections - Collection of NAT rule collections used by Azure Firewall.
+                  items:
+                    description: AzureFirewallNatRuleCollection NAT rule collection resource.
+                    properties:
+                      etag:
+                        description: Etag - READ-ONLY; Gets a unique read-only string that changes whenever the resource is updated.
+                        type: string
+                      id:
+                        description: ID - Resource ID.
+                        type: string
+                      name:
+                        description: Name - Gets name of the resource that is unique within a resource group. This name can be used to access the resource.
+                        type: string
+                      properties:
+                        description: AzureFirewallNatRuleCollectionProperties - Properties of the azure firewall NAT rule collection.
+                        properties:
+                          action:
+                            description: Action - The action type of a NAT rule collection.
+                            type: string
+                          priority:
+                            description: Priority - Priority of the NAT rule collection resource.
+                            format: int32
+                            type: integer
+                          provisioningState:
+                            description: 'ProvisioningState - The provisioning state of the resource. Possible values include: ''Succeeded'', ''Updating'', ''Deleting'', ''Failed'''
+                            type: string
+                          rules:
+                            description: Rules - Collection of rules used by a NAT rule collection.
+                            items:
+                              description: Rules Structs AzureFirewallNatRule properties of a NAT rule.
+                              properties:
+                                description:
+                                  description: Description - Description of the rule.
+                                  type: string
+                                destinationAddresses:
+                                  description: DestinationAddresses - List of destination IP addresses for this rule. Supports IP ranges, prefixes, and service tags.
+                                  items:
+                                    type: string
+                                  type: array
+                                destinationPorts:
+                                  description: DestinationPorts - List of destination ports.
+                                  items:
+                                    type: string
+                                  type: array
+                                name:
+                                  description: Name - Name of the NAT rule.
+                                  type: string
+                                protocols:
+                                  description: Protocols - Array of AzureFirewallNetworkRuleProtocols applicable to this NAT rule.
+                                  items:
+                                    type: string
+                                  type: array
+                                sourceAddresses:
+                                  description: SourceAddresses - List of source IP addresses for this rule.
+                                  items:
+                                    type: string
+                                  type: array
+                                translatedAddress:
+                                  description: TranslatedAddress - The translated address for this NAT rule.
+                                  type: string
+                                translatedPort:
+                                  description: TranslatedPort - The translated port for this NAT rule.
+                                  type: string
+                              type: object
+                            type: array
                         type: object
                     type: object
                   type: array

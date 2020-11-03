@@ -36,7 +36,7 @@ func toStringProvisioningState(provisioningState networkmgmt.ProvisioningState) 
 	return string(provisioningState)
 }
 
-func NewFireWallParameters(v *v1alpha3.AzureFirewall) networkmgmt.AzureFirewall {
+/*func NewFireWallParameters(v *v1alpha3.AzureFirewall) networkmgmt.AzureFirewall {
 	return networkmgmt.AzureFirewall{
 		Location: azure.ToStringPtr(v.Spec.Location),
 		Name:     azure.ToStringPtr(v.Spec.Name),
@@ -57,7 +57,7 @@ func NewFireWallParameters(v *v1alpha3.AzureFirewall) networkmgmt.AzureFirewall 
 			HubIPAddresses:    setHubIpAddresses(v.Spec.HubIPAddresses),
 		},
 	}
-}
+}*/
 
 func setHubIpAddresses(addresses *v1alpha3.HubIPAddresses) *networkmgmt.HubIPAddresses {
 	var hubIpAddresses = new(networkmgmt.HubIPAddresses)
@@ -158,7 +158,7 @@ func NewAzureFirewallParameters(v *v1alpha3.AzureFirewall) networkmgmt.AzureFire
 		Tags:     azure.ToStringPtrMap(v.Spec.Tags),
 		AzureFirewallPropertiesFormat: &networkmgmt.AzureFirewallPropertiesFormat{
 			//ApplicationRuleCollections: nil,
-			//NatRuleCollections:         nil,
+			NatRuleCollections: setNatRulesCollections(v.Spec.NatRuleCollections),
 			//NetworkRuleCollections:     nil,
 			IPConfigurations:  setIPConfigurations(v.Spec.IPConfigurations),
 			ProvisioningState: networkmgmt.ProvisioningState(v.Spec.ProvisioningState),
@@ -168,4 +168,57 @@ func NewAzureFirewallParameters(v *v1alpha3.AzureFirewall) networkmgmt.AzureFire
 			HubIPAddresses:    setHubIpAddresses(v.Spec.HubIPAddresses),
 		},
 	}
+}
+
+func setNatRulesCollections(natRuleCollections *[]v1alpha3.AzureFirewallNatRuleCollection) *[]networkmgmt.AzureFirewallNatRuleCollection {
+	if nil != natRuleCollections {
+		var afnrc = new([]networkmgmt.AzureFirewallNatRuleCollection)
+		for _, nrc := range *natRuleCollections {
+			var natRuleCollection = networkmgmt.AzureFirewallNatRuleCollection{}
+			natRuleCollection.Name = azure.ToStringPtr(nrc.Name)
+			natRuleCollection.ID = azure.ToStringPtr(nrc.ID)
+			natRuleCollection.AzureFirewallNatRuleCollectionProperties = &networkmgmt.AzureFirewallNatRuleCollectionProperties{
+				Priority: azure.ToInt32Ptr(int(nrc.Properties.Priority)),
+				Action: &networkmgmt.AzureFirewallNatRCAction{
+					Type: networkmgmt.AzureFirewallNatRCActionType(nrc.Properties.Action),
+				},
+				Rules:             setNATRules(nrc.Properties.Rules),
+				ProvisioningState: networkmgmt.ProvisioningState(nrc.Properties.ProvisioningState),
+			}
+			*afnrc = append(*afnrc, natRuleCollection)
+		}
+		return afnrc
+	}
+	return nil
+}
+
+func setNATRules(rules []v1alpha3.AzureFirewallNatRule) *[]networkmgmt.AzureFirewallNatRule {
+	if nil != rules {
+		var afnr = new([]networkmgmt.AzureFirewallNatRule)
+		for _, rule := range rules {
+			var r = networkmgmt.AzureFirewallNatRule{}
+			r.Name = azure.ToStringPtr(rule.Name)
+			r.Description = azure.ToStringPtr(rule.Description)
+			r.SourceAddresses = azure.ToStringArrayPtr(rule.SourceAddresses)
+			r.DestinationAddresses = azure.ToStringArrayPtr(rule.DestinationAddresses)
+			r.DestinationPorts = azure.ToStringArrayPtr(rule.DestinationPorts)
+			r.TranslatedAddress = azure.ToStringPtr(rule.TranslatedAddress)
+			r.TranslatedPort = azure.ToStringPtr(rule.TranslatedPort)
+			r.Protocols = setProtocols(rule.Protocols)
+			*afnr = append(*afnr, r)
+		}
+		return afnr
+	}
+	return nil
+}
+
+func setProtocols(protocols []string) *[]networkmgmt.AzureFirewallNetworkRuleProtocol {
+	if nil != protocols {
+		var afnrp = new([]networkmgmt.AzureFirewallNetworkRuleProtocol)
+		for _, protocol := range protocols {
+			*afnrp = append(*afnrp, networkmgmt.AzureFirewallNetworkRuleProtocol(protocol))
+		}
+		return afnrp
+	}
+	return nil
 }

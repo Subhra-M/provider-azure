@@ -488,7 +488,7 @@ type AzureFirewallPropertiesFormat struct {
 	// ApplicationRuleCollections - Collection of application rule collections used by Azure Firewall.
 	//ApplicationRuleCollections *[]AzureFirewallApplicationRuleCollection `json:"applicationRuleCollections,omitempty"`
 	// NatRuleCollections - Collection of NAT rule collections used by Azure Firewall.
-	//NatRuleCollections *[]AzureFirewallNatRuleCollection `json:"natRuleCollections,omitempty"` TODO: Uncomment and add nat rules
+	NatRuleCollections *[]AzureFirewallNatRuleCollection `json:"natRuleCollections,omitempty"`
 	// NetworkRuleCollections - Collection of network rule collections used by Azure Firewall.
 	//NetworkRuleCollections *[]AzureFirewallNetworkRuleCollection `json:"networkRuleCollections,omitempty"`
 	// IPConfigurations - IP configuration of the Azure Firewall resource.
@@ -572,4 +572,49 @@ type AzureFirewallStatus struct {
 
 	// Type of this AzureFirewall.
 	Type string `json:"type,omitempty"`
+}
+
+//Rules Structs
+// AzureFirewallNatRule properties of a NAT rule.
+type AzureFirewallNatRule struct {
+	// Name - Name of the NAT rule.
+	Name string `json:"name,omitempty"`
+	// Description - Description of the rule.
+	Description string `json:"description,omitempty"`
+	// SourceAddresses - List of source IP addresses for this rule.
+	SourceAddresses []string `json:"sourceAddresses,omitempty"`
+	// DestinationAddresses - List of destination IP addresses for this rule. Supports IP ranges, prefixes, and service tags.
+	DestinationAddresses []string `json:"destinationAddresses,omitempty"`
+	// DestinationPorts - List of destination ports.
+	DestinationPorts []string `json:"destinationPorts,omitempty"`
+	// Protocols - Array of AzureFirewallNetworkRuleProtocols applicable to this NAT rule.
+	Protocols []string `json:"protocols,omitempty"`
+	// TranslatedAddress - The translated address for this NAT rule.
+	TranslatedAddress string `json:"translatedAddress,omitempty"`
+	// TranslatedPort - The translated port for this NAT rule.
+	TranslatedPort string `json:"translatedPort,omitempty"`
+}
+
+// AzureFirewallNatRuleCollectionProperties properties of the NAT rule collection.
+type AzureFirewallNatRuleCollectionProperties struct {
+	// Priority - Priority of the NAT rule collection resource.
+	Priority int32 `json:"priority,omitempty"`
+	// Action - The action type of a NAT rule collection.
+	Action string `json:"action,omitempty"`
+	// Rules - Collection of rules used by a NAT rule collection.
+	Rules []AzureFirewallNatRule `json:"rules,omitempty"`
+	// ProvisioningState - The provisioning state of the resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
+	ProvisioningState string `json:"provisioningState,omitempty"`
+}
+
+// AzureFirewallNatRuleCollection NAT rule collection resource.
+type AzureFirewallNatRuleCollection struct {
+	// AzureFirewallNatRuleCollectionProperties - Properties of the azure firewall NAT rule collection.
+	Properties AzureFirewallNatRuleCollectionProperties `json:"properties,omitempty"`
+	// Name - Gets name of the resource that is unique within a resource group. This name can be used to access the resource.
+	Name string `json:"name,omitempty"`
+	// Etag - READ-ONLY; Gets a unique read-only string that changes whenever the resource is updated.
+	Etag string `json:"etag,omitempty"`
+	// ID - Resource ID.
+	ID string `json:"id,omitempty"`
 }
