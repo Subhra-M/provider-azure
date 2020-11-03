@@ -45,7 +45,7 @@ const (
 	errDeleteSecurityGroup = "cannot delete SecurityGroup"
 )
 
-// Setup adds a controller that reconciles VirtualNetworks.
+// Setup adds a controller that reconciles Security Group.
 func Setup(mgr ctrl.Manager, l logging.Logger) error {
 	name := managed.ControllerName(v1alpha3.SecurityGroupGroupKind)
 
@@ -74,6 +74,7 @@ func (c *connecter) Connect(ctx context.Context, mg resource.Managed) (managed.E
 	cl.Authorizer = auth
 	return &external{client: cl}, nil
 }
+
 type external struct {
 	//client networkapi.SecurityGroupsClientAPI
 	client azurenetwork.SecurityGroupsClient
@@ -129,8 +130,8 @@ func (e *external) Update(ctx context.Context, mg resource.Managed) (managed.Ext
 		return managed.ExternalUpdate{}, errors.Wrap(err, errGetSecurityGroup)
 	}
 	if securitygroup.SecurityGroupNeedsUpdate(v, az) {
-		vnet := securitygroup.NewSecurityGroupParameters(v)
-		if _, err := e.client.CreateOrUpdate(ctx, v.Spec.ResourceGroupName, meta.GetExternalName(v), vnet); err != nil {
+		sg := securitygroup.NewSecurityGroupParameters(v)
+		if _, err := e.client.CreateOrUpdate(ctx, v.Spec.ResourceGroupName, meta.GetExternalName(v), sg); err != nil {
 			return managed.ExternalUpdate{}, errors.Wrap(err, errUpdateSecurityGroup)
 		}
 	}

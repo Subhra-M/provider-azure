@@ -17,6 +17,7 @@ limitations under the License.
 package controller
 
 import (
+	"github.com/crossplane/provider-azure/pkg/controller/network/AzureFirewall"
 	ctrl "sigs.k8s.io/controller-runtime"
 
 	"github.com/crossplane/crossplane-runtime/pkg/logging"
@@ -58,6 +59,7 @@ func Setup(mgr ctrl.Manager, l logging.Logger) error {
 		account.Setup,
 		container.Setup,
 		SecurityGroup.Setup,
+		AzureFirewall.Setup,
 	} {
 		if err := setup(mgr, l); err != nil {
 			return err

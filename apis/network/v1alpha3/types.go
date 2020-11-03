@@ -240,7 +240,7 @@ type ApplicationSecurityGroupPropertiesFormat struct {
 // ApplicationSecurityGroup an application security group in a resource group.
 type ApplicationSecurityGroup struct {
 	// ApplicationSecurityGroupPropertiesFormat - Properties of the application security group.
-	Properties ApplicationSecurityGroupPropertiesFormat  `json:"properties,omitempty"`
+	Properties ApplicationSecurityGroupPropertiesFormat `json:"properties,omitempty"`
 	// Etag - READ-ONLY; A unique read-only string that changes whenever the resource is updated.
 	Etag string `json:"etag,omitempty"`
 	// ID - Resource ID.
@@ -251,7 +251,6 @@ type ApplicationSecurityGroup struct {
 	Type string `json:"type,omitempty"`
 	// Location - Resource location.
 	Location string `json:"location,omitempty"`
-
 }
 
 // SecurityRuleAccess enumerates the values for security rule access.
@@ -320,7 +319,6 @@ type SecurityRule struct {
 	ID string `json:"id,omitempty"`
 }
 
-
 // A SecurityGroupSpec defines the desired state of a SecurityGroup.
 type SecurityGroupSpec struct {
 	runtimev1alpha1.ResourceSpec `json:",inline"`
@@ -332,15 +330,15 @@ type SecurityGroupSpec struct {
 	// group.
 	ResourceGroupNameRef *runtimev1alpha1.Reference `json:"resourceGroupNameRef,omitempty"`
 
-	// ResourceGroupNameSelector - Select a reference to the the Virtual
-	// Network's resource group.
+	// ResourceGroupNameSelector - Select a reference to the the Security
+	// group's resource group.
 	ResourceGroupNameSelector *runtimev1alpha1.Selector `json:"resourceGroupNameSelector,omitempty"`
 
 	// Location - Resource location.
 	Location string `json:"location"`
 
 	//SecurityGroPropertiesFormat - Properties of security group
-	SecurityGroupPropertiesFormat   `json:"properties,omitempty"`
+	SecurityGroupPropertiesFormat `json:"properties,omitempty"`
 
 	// Tags - Resource tags.
 	// +optional
@@ -371,6 +369,7 @@ type SecurityGroupStatus struct {
 	// Type of this SecurityGroup.
 	Type string `json:"type,omitempty"`
 }
+
 // SecurityGroupPropertiesFormat network Security Group resource.
 type SecurityGroupPropertiesFormat struct {
 	// SecurityRules - A collection of security rules of the network security group.
@@ -386,6 +385,7 @@ type SecurityGroupPropertiesFormat struct {
 	// ProvisioningState - The provisioning state of the public IP resource. Possible values are: 'Updating', 'Deleting', and 'Failed'.
 	ProvisioningState *string `json:"provisioningState,omitempty"`
 }
+
 // +kubebuilder:object:root=true
 // A SecurityGroup is a managed resource that represents an Azure Security
 // Group.
@@ -397,7 +397,7 @@ type SecurityGroupPropertiesFormat struct {
 // +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
 // +kubebuilder:subresource:status
 // +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,azure}
-type SecurityGroup struct{
+type SecurityGroup struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
@@ -412,4 +412,164 @@ type SecurityGroupList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
 	Items           []SecurityGroup `json:"items"`
+}
+
+// +kubebuilder:object:root=true
+// A AzureFirewall is a managed resource that represents an Azure Firewall
+// +kubebuilder:printcolumn:name="READY",type="string",JSONPath=".status.conditions[?(@.type=='Ready')].status"
+// +kubebuilder:printcolumn:name="SYNCED",type="string",JSONPath=".status.conditions[?(@.type=='Synced')].status"
+// +kubebuilder:printcolumn:name="STATE",type="string",JSONPath=".status.state"
+// +kubebuilder:printcolumn:name="LOCATION",type="string",JSONPath=".spec.location"
+// +kubebuilder:printcolumn:name="RECLAIM-POLICY",type="string",JSONPath=".spec.reclaimPolicy"
+// +kubebuilder:printcolumn:name="AGE",type="date",JSONPath=".metadata.creationTimestamp"
+// +kubebuilder:subresource:status
+// +kubebuilder:resource:scope=Cluster,categories={crossplane,managed,azure}
+type AzureFirewall struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+
+	Spec   AzureFirewallSpec   `json:"spec"`
+	Status AzureFirewallStatus `json:"status,omitempty"`
+	///Properties SecurityGroupPropertiesFormat   `json:"properties,omitempty"`
+}
+
+// +kubebuilder:object:root=true
+// AzureFirewallList contains a list of Security Groups
+type AzureFirewallList struct {
+	metav1.TypeMeta `json:",inline"`
+	metav1.ListMeta `json:"metadata,omitempty"`
+	Items           []AzureFirewall `json:"items"`
+}
+
+// A AzureFirewallSpec defines the desired state of a AzureFirewall.
+type AzureFirewallSpec struct {
+	runtimev1alpha1.ResourceSpec `json:",inline"`
+
+	// ResourceGroupName - Name of the SecurityGroup's resource group.
+	ResourceGroupName string `json:"resourceGroupName,omitempty"`
+
+	// ResourceGroupNameRef - A reference to the the SecurityGroup's resource
+	// group.
+	ResourceGroupNameRef *runtimev1alpha1.Reference `json:"resourceGroupNameRef,omitempty"`
+
+	// ResourceGroupNameSelector - Select a reference to the the Azure Firewall
+	// resource group.
+	ResourceGroupNameSelector *runtimev1alpha1.Selector `json:"resourceGroupNameSelector,omitempty"`
+
+	// Location - Resource location.
+	Location string `json:"location"`
+
+	//AzureFirewallPropertiesFormat - Properties of AzureFirewall
+	AzureFirewallPropertiesFormat `json:"properties,omitempty"`
+
+	// Tags - Resource tags.
+	// +optional
+	Tags map[string]string `json:"tags,omitempty"`
+
+	// Zones - A list of availability zones denoting where the resource needs to come from.
+	Zones []string `json:"zones,omitempty"`
+
+	// Etag - READ-ONLY; Gets a unique read-only string that changes whenever the resource is updated.
+	Etag string `json:"etag,omitempty"`
+
+	// ID - Resource ID.
+	ID string `json:"id,omitempty"`
+
+	// Name - READ-ONLY; Resource name.
+	Name string `json:"name,omitempty"`
+
+	// Type - READ-ONLY; Resource type.
+	Type string `json:"type,omitempty"`
+	// Location - Resource location.
+}
+
+// AzureFirewallPropertiesFormat properties of the Azure Firewall.
+type AzureFirewallPropertiesFormat struct {
+	// ApplicationRuleCollections - Collection of application rule collections used by Azure Firewall.
+	//ApplicationRuleCollections *[]AzureFirewallApplicationRuleCollection `json:"applicationRuleCollections,omitempty"`
+	// NatRuleCollections - Collection of NAT rule collections used by Azure Firewall.
+	//NatRuleCollections *[]AzureFirewallNatRuleCollection `json:"natRuleCollections,omitempty"` TODO: Uncomment and add nat rules
+	// NetworkRuleCollections - Collection of network rule collections used by Azure Firewall.
+	//NetworkRuleCollections *[]AzureFirewallNetworkRuleCollection `json:"networkRuleCollections,omitempty"`
+	// IPConfigurations - IP configuration of the Azure Firewall resource.
+	IPConfigurations *[]AzureFirewallIPConfiguration `json:"ipConfigurations,omitempty"`
+	// ProvisioningState - The provisioning state of the resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
+	ProvisioningState string `json:"provisioningState,omitempty"`
+	// ThreatIntelMode - The operation mode for Threat Intelligence. Possible values include: 'AzureFirewallThreatIntelModeAlert', 'AzureFirewallThreatIntelModeDeny', 'AzureFirewallThreatIntelModeOff'
+	ThreatIntelMode string `json:"threatIntelMode,omitempty"`
+	// VirtualHub - The virtualHub to which the firewall belongs.
+	VirtualHub *SubResource `json:"virtualHub,omitempty"`
+	// FirewallPolicy - The firewallPolicy associated with this azure firewall.
+	FirewallPolicy *SubResource `json:"firewallPolicy,omitempty"`
+	// HubIPAddresses - READ-ONLY; IP addresses associated with AzureFirewall.
+	HubIPAddresses *HubIPAddresses `json:"hubIpAddresses,omitempty"`
+}
+
+// AzureFirewallIPConfiguration IP configuration of an Azure Firewall.
+type AzureFirewallIPConfiguration struct {
+	// AzureFirewallIPConfigurationPropertiesFormat - Properties of the azure firewall IP configuration.
+	AzureFirewallIPConfigurationPropertiesFormat AzureFirewallIPConfigurationPropertiesFormat `json:"properties,omitempty"`
+	// Name - Name of the resource that is unique within a resource group. This name can be used to access the resource.
+	Name *string `json:"name,omitempty"`
+	// Etag - READ-ONLY; A unique read-only string that changes whenever the resource is updated.
+	Etag *string `json:"etag,omitempty"`
+	// ID - Resource ID.
+	ID *string `json:"id,omitempty"`
+}
+
+// AzureFirewallIPConfigurationPropertiesFormat properties of IP configuration of an Azure Firewall.
+type AzureFirewallIPConfigurationPropertiesFormat struct {
+	// PrivateIPAddress - READ-ONLY; The Firewall Internal Load Balancer IP to be used as the next hop in User Defined Routes.
+	PrivateIPAddress *string `json:"privateIPAddress,omitempty"`
+	// Subnet - Reference of the subnet resource. This resource must be named 'AzureFirewallSubnet'.
+	Subnet *SubResource `json:"subnet,omitempty"`
+	// PublicIPAddress - Reference of the PublicIP resource. This field is a mandatory input if subnet is not null.
+	PublicIPAddress *SubResource `json:"publicIPAddress,omitempty"`
+	// ProvisioningState - The provisioning state of the resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
+	ProvisioningState *string `json:"provisioningState,omitempty"`
+}
+
+// SubResource reference to another subresource.
+type SubResource struct {
+	// ID - Resource ID.
+	ID *string `json:"id,omitempty"`
+}
+
+// HubIPAddresses IP addresses associated with azure firewall.
+type HubIPAddresses struct {
+	// PublicIPAddresses - List of Public IP addresses associated with azure firewall.
+	PublicIPAddresses *[]AzureFirewallPublicIPAddress `json:"publicIPAddresses,omitempty"`
+	// PrivateIPAddress - Private IP Address associated with azure firewall.
+	PrivateIPAddress *string `json:"privateIPAddress,omitempty"`
+}
+
+// AzureFirewallPublicIPAddress public IP Address associated with azure firewall.
+type AzureFirewallPublicIPAddress struct {
+	// Address - Public IP Address value.
+	Address *string `json:"address,omitempty"`
+}
+
+// A AzureFirewallStatus represents the observed status of a AzureFirewall.
+type AzureFirewallStatus struct {
+	runtimev1alpha1.ResourceStatus `json:",inline"`
+
+	// State of this SecurityGroup.
+	State string `json:"state,omitempty"`
+
+	// A Message providing detail about the state of this AzureFirewall, if
+	// any.
+	Message string `json:"message,omitempty"`
+
+	// ID of this AzureFirewall.
+	ID string `json:"id,omitempty"`
+
+	// Etag - A unique read-only string that changes whenever the resource is
+	// updated.
+	Etag string `json:"etag,omitempty"`
+
+	// ResourceGUID - The GUID of this AzureFirewall.
+	ResourceGUID string `json:"resourceGuid,omitempty"`
+
+	// Type of this AzureFirewall.
+	Type string `json:"type,omitempty"`
 }
