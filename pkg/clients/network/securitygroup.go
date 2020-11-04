@@ -83,36 +83,37 @@ func NewSecurityGroupParameters(v *v1alpha3.SecurityGroup) networkmgmt.SecurityG
 }
 
 func SetSecurityRulesToSecurityGroup(vList *[]v1alpha3.SecurityRule) *[]networkmgmt.SecurityRule{
-	//vSecList:=new([]networkmgmt.SecurityRule)
 	var vSecList = new([]networkmgmt.SecurityRule)
-	//vSecList=vList
-	for _, v:= range *vList{
-		var sRule = networkmgmt.SecurityRule{}
-		sRule.ID = azure.ToStringPtr(v.ID)
-		sRule.Name = azure.ToStringPtr(v.Name)
-		sRule.Etag = azure.ToStringPtr(v.Etag)
-		//sRule.Protocol = setSecurityRuleProtocol(v.Properties.Protocol)
-		var ruleProperties = new(networkmgmt.SecurityRulePropertiesFormat)
-		ruleProperties.Description = azure.ToStringPtr(v.Properties.Description)
-		ruleProperties.Protocol = setSecurityRuleProtocol(v.Properties.Protocol)
-		ruleProperties.Access = setSecurityRuleAccess(v.Properties.Access)
-		ruleProperties.ProvisioningState = azure.ToStringPtr(v.Properties.ProvisioningState)
-		ruleProperties.SourcePortRange = azure.ToStringPtr(v.Properties.SourcePortRange)
-		ruleProperties.DestinationPortRange = azure.ToStringPtr(v.Properties.DestinationPortRange)
-		ruleProperties.SourcePortRanges = azure.ToStringArrayPtr(v.Properties.SourcePortRanges)
-		ruleProperties.DestinationPortRanges = azure.ToStringArrayPtr(v.Properties.DestinationPortRanges)
-		ruleProperties.SourceAddressPrefix = azure.ToStringPtr(v.Properties.SourceAddressPrefix)
-		ruleProperties.DestinationAddressPrefix = azure.ToStringPtr(v.Properties.DestinationAddressPrefix)
-		ruleProperties.SourceAddressPrefixes = azure.ToStringArrayPtr(v.Properties.SourceAddressPrefixes)
-		ruleProperties.DestinationAddressPrefixes = azure.ToStringArrayPtr(v.Properties.DestinationAddressPrefixes)
-		ruleProperties.Direction = setSecurityRuleDirection(v.Properties.Direction)
-		ruleProperties.Priority = azure.ToInt32Ptr(int(v.Properties.Priority))
-		ruleProperties.SourceApplicationSecurityGroups = setApplicationSecurityGroups(&v.Properties.SourceApplicationSecurityGroups)
-		ruleProperties.DestinationApplicationSecurityGroups = setApplicationSecurityGroups(&v.Properties.DestinationApplicationSecurityGroups)
-		sRule.SecurityRulePropertiesFormat = ruleProperties
-		*vSecList = append(*vSecList, sRule)
+	if vList !=nil {
+		for _, v := range *vList {
+			var sRule = networkmgmt.SecurityRule{}
+			sRule.ID = azure.ToStringPtr(v.ID)
+			sRule.Name = azure.ToStringPtr(v.Name)
+			sRule.Etag = azure.ToStringPtr(v.Etag)
+			//sRule.Protocol = setSecurityRuleProtocol(v.Properties.Protocol)
+			var ruleProperties = new(networkmgmt.SecurityRulePropertiesFormat)
+			ruleProperties.Description = azure.ToStringPtr(v.Properties.Description)
+			ruleProperties.Protocol = setSecurityRuleProtocol(v.Properties.Protocol)
+			ruleProperties.Access = setSecurityRuleAccess(v.Properties.Access)
+			ruleProperties.ProvisioningState = azure.ToStringPtr(v.Properties.ProvisioningState)
+			ruleProperties.SourcePortRange = azure.ToStringPtr(v.Properties.SourcePortRange)
+			ruleProperties.DestinationPortRange = azure.ToStringPtr(v.Properties.DestinationPortRange)
+			ruleProperties.SourcePortRanges = azure.ToStringArrayPtr(v.Properties.SourcePortRanges)
+			ruleProperties.DestinationPortRanges = azure.ToStringArrayPtr(v.Properties.DestinationPortRanges)
+			ruleProperties.SourceAddressPrefix = azure.ToStringPtr(v.Properties.SourceAddressPrefix)
+			ruleProperties.DestinationAddressPrefix = azure.ToStringPtr(v.Properties.DestinationAddressPrefix)
+			ruleProperties.SourceAddressPrefixes = azure.ToStringArrayPtr(v.Properties.SourceAddressPrefixes)
+			ruleProperties.DestinationAddressPrefixes = azure.ToStringArrayPtr(v.Properties.DestinationAddressPrefixes)
+			ruleProperties.Direction = setSecurityRuleDirection(v.Properties.Direction)
+			ruleProperties.Priority = azure.ToInt32Ptr(int(v.Properties.Priority))
+			ruleProperties.SourceApplicationSecurityGroups = setApplicationSecurityGroups(&v.Properties.SourceApplicationSecurityGroups)
+			ruleProperties.DestinationApplicationSecurityGroups = setApplicationSecurityGroups(&v.Properties.DestinationApplicationSecurityGroups)
+			sRule.SecurityRulePropertiesFormat = ruleProperties
+			*vSecList = append(*vSecList, sRule)
+		}
+		return vSecList
 	}
-	return vSecList
+	return nil
 }
 
 func setApplicationSecurityGroups(groups *[]v1alpha3.ApplicationSecurityGroup) *[]networkmgmt.ApplicationSecurityGroup {
