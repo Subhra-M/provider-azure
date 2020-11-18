@@ -27,6 +27,7 @@ metadata:
       the [crossplane/provider-azure](https://github.com/crossplane/provider-azure)
       repo.
 
+
 spec:
   controller:
     image: crossplane/provider-azure-controller:VERSION
