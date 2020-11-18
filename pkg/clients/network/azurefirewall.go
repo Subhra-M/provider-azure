@@ -141,6 +141,12 @@ func AzureFirewallNeedsUpdate(firewall *v1alpha3.AzureFirewall, az networkmgmt.A
 	if !reflect.DeepEqual(firewall.Spec.Tags, az.Tags) {
 		return true
 	}
+	if !reflect.DeepEqual(firewall.Spec.NatRuleCollections, az.AzureFirewallPropertiesFormat.NatRuleCollections){
+		return true
+	}
+	if !reflect.DeepEqual(firewall.Spec.NetworkRuleCollections, az.AzureFirewallPropertiesFormat.NetworkRuleCollections){
+		return true
+	}
 	//TODO: Azure firewall rules needed to added here once completed with structs
 
 	return false
@@ -159,7 +165,7 @@ func NewAzureFirewallParameters(v *v1alpha3.AzureFirewall) networkmgmt.AzureFire
 		AzureFirewallPropertiesFormat: &networkmgmt.AzureFirewallPropertiesFormat{
 			//ApplicationRuleCollections: nil,
 			NatRuleCollections: setNatRulesCollections(v.Spec.NatRuleCollections),
-			//NetworkRuleCollections:     nil,
+			NetworkRuleCollections:     setNetworkRulesCollections(v.Spec.NetworkRuleCollections),
 			IPConfigurations:  setIPConfigurations(v.Spec.IPConfigurations),
 			ProvisioningState: networkmgmt.ProvisioningState(v.Spec.ProvisioningState),
 			ThreatIntelMode:   networkmgmt.AzureFirewallThreatIntelMode(v.Spec.ThreatIntelMode),
@@ -170,6 +176,27 @@ func NewAzureFirewallParameters(v *v1alpha3.AzureFirewall) networkmgmt.AzureFire
 	}
 }
 
+func setNetworkRulesCollections(networkRulesCollections *[]v1alpha3.AzureFirewallNetworkRuleCollection) *[]networkmgmt.AzureFirewallNetworkRuleCollection {
+	if nil != networkRulesCollections{
+		var afnrc = new([]networkmgmt.AzureFirewallNetworkRuleCollection)
+		for _, nrc := range *networkRulesCollections {
+			var networkRuleCollection = networkmgmt.AzureFirewallNetworkRuleCollection{}
+			networkRuleCollection.ID = azure.ToStringPtr(nrc.ID)
+			networkRuleCollection.Name = azure.ToStringPtr(nrc.Name)
+			networkRuleCollection.Etag = azure.ToStringPtr(nrc.Etag)
+			networkRuleCollection.AzureFirewallNetworkRuleCollectionPropertiesFormat = &networkmgmt.AzureFirewallNetworkRuleCollectionPropertiesFormat{
+				Priority: azure.ToInt32Ptr(int(nrc.Properties.Priority)),
+				Action: &networkmgmt.AzureFirewallRCAction{Type: networkmgmt.AzureFirewallRCActionType(nrc.Properties.Action)},
+				Rules:             setNetworkRules(nrc.Properties.Rules),
+				ProvisioningState: networkmgmt.ProvisioningState(nrc.Properties.ProvisioningState),
+			}
+			*afnrc = append(*afnrc, networkRuleCollection)
+		}
+		return afnrc
+	}
+	return nil
+}
+
 func setNatRulesCollections(natRuleCollections *[]v1alpha3.AzureFirewallNatRuleCollection) *[]networkmgmt.AzureFirewallNatRuleCollection {
 	if nil != natRuleCollections {
 		var afnrc = new([]networkmgmt.AzureFirewallNatRuleCollection)
@@ -177,6 +204,7 @@ func setNatRulesCollections(natRuleCollections *[]v1alpha3.AzureFirewallNatRuleC
 			var natRuleCollection = networkmgmt.AzureFirewallNatRuleCollection{}
 			natRuleCollection.Name = azure.ToStringPtr(nrc.Name)
 			natRuleCollection.ID = azure.ToStringPtr(nrc.ID)
+			natRuleCollection.Etag = azure.ToStringPtr(nrc.Etag)
 			natRuleCollection.AzureFirewallNatRuleCollectionProperties = &networkmgmt.AzureFirewallNatRuleCollectionProperties{
 				Priority: azure.ToInt32Ptr(int(nrc.Properties.Priority)),
 				Action: &networkmgmt.AzureFirewallNatRCAction{
@@ -188,6 +216,24 @@ func setNatRulesCollections(natRuleCollections *[]v1alpha3.AzureFirewallNatRuleC
 			*afnrc = append(*afnrc, natRuleCollection)
 		}
 		return afnrc
+	}
+	return nil
+}
+
+func setNetworkRules(rules []v1alpha3.AzureFirewallNetworkRule) *[]networkmgmt.AzureFirewallNetworkRule {
+	if nil != rules {
+		var afnr = new([]networkmgmt.AzureFirewallNetworkRule)
+		for _, rule := range rules {
+			var r = networkmgmt.AzureFirewallNetworkRule{}
+			r.Name = azure.ToStringPtr(rule.Name)
+			r.Description = azure.ToStringPtr(rule.Description)
+			r.Protocols = setProtocols(rule.Protocols)
+			r.SourceAddresses = azure.ToStringArrayPtr(rule.SourceAddresses)
+			r.DestinationAddresses = azure.ToStringArrayPtr(rule.DestinationAddresses)
+			r.DestinationPorts = azure.ToStringArrayPtr(rule.DestinationPorts)
+			*afnr = append(*afnr, r)
+		}
+		return afnr
 	}
 	return nil
 }

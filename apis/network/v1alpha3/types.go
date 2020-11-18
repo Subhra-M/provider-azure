@@ -490,7 +490,7 @@ type AzureFirewallPropertiesFormat struct {
 	// NatRuleCollections - Collection of NAT rule collections used by Azure Firewall.
 	NatRuleCollections *[]AzureFirewallNatRuleCollection `json:"natRuleCollections,omitempty"`
 	// NetworkRuleCollections - Collection of network rule collections used by Azure Firewall.
-	//NetworkRuleCollections *[]AzureFirewallNetworkRuleCollection `json:"networkRuleCollections,omitempty"`
+	NetworkRuleCollections *[]AzureFirewallNetworkRuleCollection `json:"networkRuleCollections,omitempty"`
 	// IPConfigurations - IP configuration of the Azure Firewall resource.
 	IPConfigurations *[]AzureFirewallIPConfiguration `json:"ipConfigurations,omitempty"`
 	// ProvisioningState - The provisioning state of the resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
@@ -617,4 +617,44 @@ type AzureFirewallNatRuleCollection struct {
 	Etag string `json:"etag,omitempty"`
 	// ID - Resource ID.
 	ID string `json:"id,omitempty"`
+}
+
+// AzureFirewallNetworkRuleCollection network rule collection resource.
+type AzureFirewallNetworkRuleCollection struct {
+	// AzureFirewallNetworkRuleCollectionPropertiesFormat - Properties of the azure firewall network rule collection.
+	Properties AzureFirewallNetworkRuleCollectionPropertiesFormat `json:"properties,omitempty"`
+	// Name - Gets name of the resource that is unique within a resource group. This name can be used to access the resource.
+	Name string `json:"name,omitempty"`
+	// Etag - READ-ONLY; Gets a unique read-only string that changes whenever the resource is updated.
+	Etag string `json:"etag,omitempty"`
+	// ID - Resource ID.
+	ID string `json:"id,omitempty"`
+}
+
+// AzureFirewallNetworkRuleCollectionPropertiesFormat properties of the network rule collection.
+type AzureFirewallNetworkRuleCollectionPropertiesFormat struct {
+	// Priority - Priority of the network rule collection resource.
+	Priority int32 `json:"priority,omitempty"`
+	// Action - The action type of a rule collection.
+	Action string `json:"action,omitempty"`
+	// Rules - Collection of rules used by a network rule collection.
+	Rules []AzureFirewallNetworkRule `json:"rules,omitempty"`
+	// ProvisioningState - The provisioning state of the resource. Possible values include: 'Succeeded', 'Updating', 'Deleting', 'Failed'
+	ProvisioningState string `json:"provisioningState,omitempty"`
+}
+
+// AzureFirewallNetworkRule properties of the network rule.
+type AzureFirewallNetworkRule struct {
+	// Name - Name of the network rule.
+	Name string `json:"name,omitempty"`
+	// Description - Description of the rule.
+	Description string `json:"description,omitempty"`
+	// Protocols - Array of AzureFirewallNetworkRuleProtocols.
+	Protocols []string `json:"protocols,omitempty"`
+	// SourceAddresses - List of source IP addresses for this rule.
+	SourceAddresses []string `json:"sourceAddresses,omitempty"`
+	// DestinationAddresses - List of destination IP addresses.
+	DestinationAddresses []string `json:"destinationAddresses,omitempty"`
+	// DestinationPorts - List of destination ports.
+	DestinationPorts []string `json:"destinationPorts,omitempty"`
 }

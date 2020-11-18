@@ -99,7 +99,7 @@ spec:
                       type: array
                   type: object
                 ipConfigurations:
-                  description: NetworkRuleCollections - Collection of network rule collections used by Azure Firewall. NetworkRuleCollections *[]AzureFirewallNetworkRuleCollection `json:"networkRuleCollections,omitempty"` IPConfigurations - IP configuration of the Azure Firewall resource.
+                  description: IPConfigurations - IP configuration of the Azure Firewall resource.
                   items:
                     description: AzureFirewallIPConfiguration IP configuration of an Azure Firewall.
                     properties:
@@ -202,6 +202,69 @@ spec:
                                 translatedPort:
                                   description: TranslatedPort - The translated port for this NAT rule.
                                   type: string
+                              type: object
+                            type: array
+                        type: object
+                    type: object
+                  type: array
+                networkRuleCollections:
+                  description: NetworkRuleCollections - Collection of network rule collections used by Azure Firewall.
+                  items:
+                    description: AzureFirewallNetworkRuleCollection network rule collection resource.
+                    properties:
+                      etag:
+                        description: Etag - READ-ONLY; Gets a unique read-only string that changes whenever the resource is updated.
+                        type: string
+                      id:
+                        description: ID - Resource ID.
+                        type: string
+                      name:
+                        description: Name - Gets name of the resource that is unique within a resource group. This name can be used to access the resource.
+                        type: string
+                      properties:
+                        description: AzureFirewallNetworkRuleCollectionPropertiesFormat - Properties of the azure firewall network rule collection.
+                        properties:
+                          action:
+                            description: Action - The action type of a rule collection.
+                            type: string
+                          priority:
+                            description: Priority - Priority of the network rule collection resource.
+                            format: int32
+                            type: integer
+                          provisioningState:
+                            description: 'ProvisioningState - The provisioning state of the resource. Possible values include: ''Succeeded'', ''Updating'', ''Deleting'', ''Failed'''
+                            type: string
+                          rules:
+                            description: Rules - Collection of rules used by a network rule collection.
+                            items:
+                              description: AzureFirewallNetworkRule properties of the network rule.
+                              properties:
+                                description:
+                                  description: Description - Description of the rule.
+                                  type: string
+                                destinationAddresses:
+                                  description: DestinationAddresses - List of destination IP addresses.
+                                  items:
+                                    type: string
+                                  type: array
+                                destinationPorts:
+                                  description: DestinationPorts - List of destination ports.
+                                  items:
+                                    type: string
+                                  type: array
+                                name:
+                                  description: Name - Name of the network rule.
+                                  type: string
+                                protocols:
+                                  description: Protocols - Array of AzureFirewallNetworkRuleProtocols.
+                                  items:
+                                    type: string
+                                  type: array
+                                sourceAddresses:
+                                  description: SourceAddresses - List of source IP addresses for this rule.
+                                  items:
+                                    type: string
+                                  type: array
                               type: object
                             type: array
                         type: object
