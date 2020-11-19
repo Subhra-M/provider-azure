@@ -389,7 +389,7 @@ spec:
               - name
               type: object
             resourceGroupNameSelector:
-              description: ResourceGroupNameSelector - Select a reference to the the Virtual Network's resource group.
+              description: ResourceGroupNameSelector - Select a reference to the the Security group's resource group.
               properties:
                 matchControllerRef:
                   description: MatchControllerRef ensures an object with the same controller reference as the selecting object is selected.
