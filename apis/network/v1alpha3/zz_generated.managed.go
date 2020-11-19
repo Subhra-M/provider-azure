@@ -132,6 +132,7 @@ func (mg *SecurityGroup) SetWriteConnectionSecretToReference(r *runtimev1alpha1.
 	mg.Spec.WriteConnectionSecretToReference = r
 }
 
+
 // GetCondition of this Subnet.
 func (mg *Subnet) GetCondition(ct runtimev1alpha1.ConditionType) runtimev1alpha1.Condition {
 	return mg.Status.GetCondition(ct)
